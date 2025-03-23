@@ -5,6 +5,12 @@ import os
 from pdf2image import convert_from_path
 import cv2
 import pytesseract
+from dotenv import load_dotenv
+import os
+import numpy as np
+
+
+load_dotenv("passwords.env")
 
 
 def convert_pdf_id_data_folder_into_jpgs_in_data_parsed_pdf(
