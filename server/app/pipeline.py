@@ -52,7 +52,7 @@ def convert_pdf_id_data_folder_into_jpgs_in_data_parsed_pdf(
                 flush=True,
             )
             page.save(f"{cache_folder}/output_page_{i}.jpg", "JPEG")
-        deskew_and_center_images_in_folder(cache_folder)
+        # deskew_and_center_images_in_folder(cache_folder)
         print("- PDF -> JPGs DONE!                ")
 
 
@@ -215,29 +215,45 @@ def extract_text_from_pdf(pdf_path):
     return text
 
 
-def parse_customs_document(pdf_text, prompt, model="gpt-4o-mini"):
-    # Load API key from environment variable
+import openai
+import os
+import textwrap
+
+
+def parse_customs_document(pdf_text, prompt, model="gpt-4o-mini", chunk_size=10000):
+    # Load API key
     api_key = os.getenv("CHAT_GPT_API")
     if not api_key:
-        raise ValueError(
-            "API key not found. Make sure CHAT_GPT_API is set in your environment variables."
-        )
+        raise ValueError("API key not found. Set CHAT_GPT_API in your environment.")
 
     client = openai.OpenAI(api_key=api_key)
 
-    # Trim if needed (can make this dynamic if you're chunking later)
-    pdf_chunk = pdf_text[:10000]
+    # Split into chunks
+    chunks = textwrap.wrap(pdf_text, width=chunk_size)
 
-    # Send to OpenAI
-    response = client.chat.completions.create(
-        model=model,
-        messages=[
-            {"role": "system", "content": prompt},
-            {"role": "user", "content": pdf_chunk},
-        ],
-    )
+    all_responses = []
 
-    return response.choices[0].message.content
+    for i, chunk in enumerate(chunks, start=1):
+        print(f"🔹 Processing chunk {i}/{len(chunks)}...")
+
+        try:
+            response = client.chat.completions.create(
+                model=model,
+                messages=[
+                    {"role": "system", "content": prompt},
+                    {"role": "user", "content": chunk},
+                ],
+            )
+
+            result = response.choices[0].message.content
+            all_responses.append(f"--- Chunk {i} ---\n{result}\n")
+
+        except Exception as e:
+            print(f"❌ Error processing chunk {i}: {e}")
+            all_responses.append(f"--- Chunk {i} ---\n[ERROR]: {e}\n")
+
+    # Return all results as one string
+    return "\n".join(all_responses)
 
 
 # Define the customs parsing prompt
