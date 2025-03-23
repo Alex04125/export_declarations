@@ -1,0 +1,56 @@
+# Python cache and bytecode
+__pycache__/
+*.py[cod]
+*.so
+*.pyd
+*.dll
+
+# Virtual environments
+env/
+venv/
+.venv/
+ENV/
+*.egg-info/
+*.egg
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Logs and system files
+*.log
+*.DS_Store
+*.swp
+*.swo
+Thumbs.db
+
+# Environment variables / secrets
+server/app/passwords.env
+server/app/cheat.py
+server/app/*.ipynb
+.env.*
+
+# Output files (processed text, images, etc.)
+*.jpg
+*.jpeg
+*.png
+*.tif
+*.tiff
+*.bmp
+*.pdf
+*.txt
+*.json
+*.csv
+
+# Output folders
+data/
+output/
+cache/
+__processed__/
+
+# VS Code and IDE settings
+.vscode/
+.idea/
+
+# Tesseract OCR temp
+tessinput.txt
+tesseract.log
